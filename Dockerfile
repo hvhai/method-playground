@@ -24,6 +24,7 @@ WORKDIR /app
 COPY --from=build /code/build/libs/method-playground-0.0.1-SNAPSHOT.jar app.jar
 
 # ENV PORT=8080
+ARG APP_METHOD_API_TOKEN
 ENV APP_METHOD_API_TOKEN $APP_METHOD_API_TOKEN
 EXPOSE 8080
 
