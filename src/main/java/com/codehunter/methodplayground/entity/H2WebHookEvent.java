@@ -14,8 +14,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "web_hook_event")
@@ -30,6 +28,7 @@ public class H2WebHookEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+    private String type;
 
     private String data;
     private Instant createAt;

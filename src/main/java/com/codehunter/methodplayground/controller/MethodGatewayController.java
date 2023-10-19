@@ -14,6 +14,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -46,12 +46,11 @@ public class MethodGatewayController {
         return body;
     }
 
-    @PostMapping("/webhook")
+    @PostMapping("/webhook/{eventType}")
     @ResponseStatus(HttpStatus.OK)
-    public void webhook(@RequestBody WebHookEvent event) {
-        log.info("Receive webhook event : {}", event);
-//        ofInstant(Instant.now(), ZoneOffset.UTC)
-        var h2Event = H2WebHookEvent.builder().data(event.toString()).createAt(ZonedDateTime.now().toInstant()).build();
+    public void webhook(@RequestBody WebHookEvent event, @PathVariable String eventType) {
+        log.info("Receive webhook type {} | event : {}", eventType, event);
+        var h2Event = H2WebHookEvent.builder().type(eventType).data(event.toString()).createAt(ZonedDateTime.now().toInstant()).build();
         webHookEventRepository.save(h2Event);
     }
 
@@ -62,6 +61,7 @@ public class MethodGatewayController {
                 .map(event ->
                         WebHookEventDto.builder()
                                 .id(event.getId())
+                                .type(event.getType())
                                 .data(event.getData())
                                 .createAt(ZonedDateTime.ofInstant(event.getCreateAt(), ZoneOffset.UTC))
                                 .build())
