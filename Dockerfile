@@ -1,6 +1,6 @@
 # Use the official maven/Java 8 image to create a build artifact.
 # https://hub.docker.com/_/maven
-FROM gradle:8.4-jdk17-alpine as build
+FROM gradle:8.4-jdk17-alpine AS build
 #FROM openjdk:17-jdk-slim as build
 WORKDIR /code
 #
@@ -24,6 +24,7 @@ WORKDIR /app
 COPY --from=build /code/build/libs/method-playground-0.0.1-SNAPSHOT.jar app.jar
 
 # ENV PORT=8080
+ENV APP_METHOD_API_TOKEN $APP_METHOD_API_TOKEN
 EXPOSE 8080
 
 # Run the web service on container startup.
