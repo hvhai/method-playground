@@ -9,7 +9,6 @@ import java.time.ZonedDateTime;
 @Builder
 public class WebHookEventDto {
     private Long id;
-    private String type;
     private String data;
     private ZonedDateTime createAt;
 }

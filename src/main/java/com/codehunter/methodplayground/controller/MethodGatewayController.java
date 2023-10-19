@@ -46,22 +46,21 @@ public class MethodGatewayController {
         return body;
     }
 
-    @PostMapping("/webhook/{eventType}")
+    @PostMapping("/webhook")
     @ResponseStatus(HttpStatus.OK)
-    public void webhook(@RequestBody WebHookEvent event, @PathVariable String eventType) {
-        log.info("Receive webhook type {} | event : {}", eventType, event);
-        var h2Event = H2WebHookEvent.builder().type(eventType).data(event.toString()).createAt(ZonedDateTime.now().toInstant()).build();
+    public void webhook(@RequestBody WebHookEvent event) {
+        log.info("Receive webhook  event : {}", event);
+        var h2Event = H2WebHookEvent.builder().data(event.toString()).createAt(ZonedDateTime.now().toInstant()).build();
         webHookEventRepository.save(h2Event);
     }
 
     @GetMapping("/webhook-events")
     public List<WebHookEventDto> getAllEvent() {
-        var eventList = webHookEventRepository.findAll();
+        var eventList = webHookEventRepository.findAllByOrderByIdDesc();
         return eventList.stream()
                 .map(event ->
                         WebHookEventDto.builder()
                                 .id(event.getId())
-                                .type(event.getType())
                                 .data(event.getData())
                                 .createAt(ZonedDateTime.ofInstant(event.getCreateAt(), ZoneOffset.UTC))
                                 .build())

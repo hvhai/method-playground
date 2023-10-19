@@ -28,7 +28,6 @@ public class H2WebHookEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    private String type;
 
     private String data;
     private Instant createAt;
