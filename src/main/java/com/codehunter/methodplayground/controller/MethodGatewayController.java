@@ -6,7 +6,6 @@ import com.codehunter.methodplayground.client.method.dto.WebHookEvent;
 import com.codehunter.methodplayground.dto.WebHookEventDto;
 import com.codehunter.methodplayground.entity.H2WebHookEvent;
 import com.codehunter.methodplayground.respository.WebHookEventRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,21 +27,24 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/method")
-@RequiredArgsConstructor
 @Slf4j
 public class MethodGatewayController {
-    @Value("${app.method.url}")
-    private String methodUrl;
+    private final String methodUrl;
     private final RestTemplate methodClient;
     private final WebHookEventRepository webHookEventRepository;
+
+    public MethodGatewayController(@Value("${app.method.url}") String methodUrl, RestTemplate methodClient, WebHookEventRepository webHookEventRepository) {
+        this.methodUrl = methodUrl;
+        this.methodClient = methodClient;
+        this.webHookEventRepository = webHookEventRepository;
+    }
 
     @GetMapping("/entities")
     public Response<List<Entity>> getAllEntities() {
         ParameterizedTypeReference<Response<List<Entity>>> responseType = new ParameterizedTypeReference<Response<List<Entity>>>() {
         };
         ResponseEntity<Response<List<Entity>>> response = methodClient.exchange(methodUrl + "/entities", HttpMethod.GET, null, responseType);
-        Response<List<Entity>> body = response.getBody();
-        return body;
+        return response.getBody();
     }
 
     @PostMapping("/webhook")
