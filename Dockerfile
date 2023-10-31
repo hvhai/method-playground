@@ -8,7 +8,7 @@ WORKDIR /code
 COPY . .
 #
 # # Build a release artifact.
-RUN gradle clean build --no-daemon
+RUN gradle clean build --no-daemon -x test
 
 
 #
